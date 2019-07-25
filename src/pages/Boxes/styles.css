@@ -9,15 +9,15 @@
     align-items: center;
 }
 
+#box-container header img {
+    width: 75px;
+    height: 70px;
+}
+
 #box-container span{
     display: flex;
     justify-content: center;
     align-items: center;
-}
-
-#box-container header img {
-    width: 75px;
-    height: 70px;
 }
 
 #box-container header h1{
@@ -93,4 +93,13 @@
 #box-container ul li span {
     color: #999;
     font-size: 13px;
+}
+
+.cursor{
+    cursor: pointer;
+}
+
+.moboxLista{
+    width: 20 px;
+    height:20px;
 }

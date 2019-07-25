@@ -25,14 +25,21 @@ export default class Main extends Component {
     handleInputChange = (e) => {
         this.setState({ newBox: e.target.value })
     }
+
+    handleBoxes = async e  => {
+        
+        this.props.history.push('/list')
+
+    }
     
     render() {
         return (
             <div id="main-container">
                 <form onSubmit={this.handleSubmit}>
-                    <img src={logo} alt="moboxLogo"/>
-                    <input value={this.state.newBox} onChange={this.handleInputChange} maxlength="25" placeholder="Digite o nome para a box" />
+                    <img src={logo} alt="moboxLogo" onClick={this.handleBoxes}/>
+                    <input value={this.state.newBox} onChange={this.handleInputChange} maxLength="25" placeholder="Digite o nome para a box" />
                     <button type="submit">Criar</button>
+                    <label onClick={this.handleBoxes}>Clique aqui para ver as mobox existentes.</label>
                 </form>
             </div>
         );

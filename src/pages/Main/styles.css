@@ -41,3 +41,15 @@
 #main-container form button:hover{
     opacity: 0.8;
 }
+
+#main-container form label{
+    font-size: 13px;
+    padding: 0 20px;
+    margin-top: 20px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.cursor{
+    cursor: pointer;
+}
