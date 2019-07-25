@@ -14,7 +14,7 @@ import "./styles.css";
 
 export default class Box extends Component {
 
-    state = { box: {}, show: false, moboxName: '' }
+    state = { box: {}, show: false, showVazio: false, moboxName: '' }
 
     async componentDidMount(){
 
@@ -25,6 +25,22 @@ export default class Box extends Component {
         const response = await api.get(`boxes/${box}`)
 
         this.setState({box: response.data})
+
+        this.verificaVazio(response.data.files)
+
+    }
+
+    verificaVazio = (response) =>{
+
+        if(response.length === 0){
+            
+            this.setState({showVazio: true})
+
+        }else{
+
+            this.setState({showVazio: false})
+
+        }
 
     }
 
@@ -39,12 +55,16 @@ export default class Box extends Component {
         io.on('file', data =>{
             
             this.setState({box: {...this.state.box, files: [data, ...this.state.box.files]}})
+            
+            this.verificaVazio(data)
 
         })
 
         io.on('delete', data =>{
             
             this.setState({box: data})
+            
+            this.verificaVazio(data.files)
 
         })
 
@@ -102,6 +122,12 @@ export default class Box extends Component {
             
             display: this.state.show ? "block" : "none"
 
+        }
+        
+        var shownVazio = {
+            
+            display: this.state.showVazio ? "block" : "none"
+
 		}
         
         return (
@@ -122,6 +148,9 @@ export default class Box extends Component {
                         </div>
                     )}
                 </Dropzone>
+                <span>
+                    <h4 style={shownVazio}>Não há arquivos a serem mostrados nesta Mobox.</h4>
+                </span>
                 <span>
                     <h4 className="fileInfo" style={shown}>Arquivo {this.state.fileName} foi exluído com sucesso.</h4>
                 </span>

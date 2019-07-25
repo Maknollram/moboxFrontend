@@ -11,7 +11,7 @@ import "./styles.css";
 
 export default class Box extends Component {
 
-    state = { boxes: {}, show: false, moboxName: '', fileQtt: 0 }
+    state = { boxes: {}, show: false, showVazio: false, moboxName: '', fileQtt: 0 }
 
     async componentDidMount(){
 
@@ -20,6 +20,22 @@ export default class Box extends Component {
         const response = await api.get('list')
 
         this.setState({boxes: response})
+        
+        this.verificaVazio(response)
+
+    }
+
+    verificaVazio = (response) =>{
+
+        if(response.data.length === 0){
+            
+            this.setState({showVazio: true})
+
+        }else{
+
+            this.setState({showVazio: false})
+
+        }
 
     }
 
@@ -29,11 +45,22 @@ export default class Box extends Component {
 
         io.on('box', async data =>{
             
+            // console.log(JSON.stringify(data))
+
             const response = await api.get('list')
 
             this.setState({boxes: response})
 
+            this.verificaVazio(response)
+
         })
+
+    }
+
+    verificaBox = async (boxId) =>{
+
+        const response = await api.get(`boxes/${boxId}`)
+        this.setState({fileQtt: response.data.files.length})
 
     }
 
@@ -46,8 +73,6 @@ export default class Box extends Component {
             this.componentDidMount()
             if(response.status === 200){
                 this.setState({ show: true })
-                this.setState({moboxName: response.data.title})
-                this.setState({fileQtt: response.data.files.length})
             }
         })
         .then(response =>{
@@ -63,11 +88,27 @@ export default class Box extends Component {
 
     }
 
+    exclusao = async (id, title) =>{
+
+        this.setState({moboxName: title})
+
+        await this.verificaBox(id) 
+        
+        await window.confirm(`Deseja realmente deletar Mobox ${title} e seu(s) ${this.state.fileQtt} arquivo(s)?`) && await this.handleDelete(id)
+
+    }
+
     render() {
         
         var shown = {
             
             display: this.state.show ? "block" : "none"
+
+        }
+        
+        var shownVazio = {
+            
+            display: this.state.showVazio ? "block" : "none"
 
 		}
         
@@ -77,6 +118,9 @@ export default class Box extends Component {
                     <Link to="/" style={{ textDecoration: 'none' }}><img title="Clique aqui para voltar à tela inicial." src={logo} alt="moboxLogo"/></Link>
                     <Link to="/" style={{ textDecoration: 'none' }}><h1 title="Clique aqui para voltar à tela inicial.">MOBOX</h1></Link>
                 </header>
+                <span>
+                    <h4 style={shownVazio}>Não há Mobox para serem mostradas.</h4>
+                </span>
                 <span>
                     <h4 style={shown}>Mobox {this.state.moboxName} e seu(s) {this.state.fileQtt} arquivo(s) exluído(s) com sucesso.</h4>
                 </span>
@@ -93,7 +137,7 @@ export default class Box extends Component {
                                 {distanceInWords(box.createdAt, new Date(), {
                                 locale: pt
                             })}
-                                <MdDelete title="Excluir" className="cursor" onClick={() => window.confirm(`Deseja realmente deletar Mobox ${box.title} e seu(s) ${box.files.length} arquivo(s)?`) && this.handleDelete(box._id)} size={24} color="#c60707"/>
+                                <MdDelete title="Excluir" className="cursor" onClick={() => this.exclusao(box._id, box.title)} size={24} color="#c60707"/>
                             </span>
                         </li>
                     ))}
